@@ -16,7 +16,7 @@
     </properties>
 
     <dependencies>
-        <!-- Jakarta Servlet API (For Tomcat 10) -->
+        <!-- Jakarta Servlet API for Tomcat 10 -->
         <dependency>
             <groupId>jakarta.servlet</groupId>
             <artifactId>jakarta.servlet-api</artifactId>
