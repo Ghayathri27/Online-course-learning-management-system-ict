@@ -1,11 +1,13 @@
-# Tomcat 10 base image
+# Step 1: Build Java files
+FROM maven:3.9.6-eclipse-temurin-21 AS builder
+WORKDIR /app
+COPY . .
+RUN mvn clean package -DskipTests
+
+# Step 2: Deploy to Tomcat 10
 FROM tomcat:10.1-jdk21
-
-# Remove default Tomcat webapps
 RUN rm -rf /usr/local/tomcat/webapps/*
-
-# Copy webapp contents into ROOT
-COPY src/main/webapp /usr/local/tomcat/webapps/ROOT
+COPY --from=builder /app/target/*.war /usr/local/tomcat/webapps/ROOT.war
 
 EXPOSE 8080
 CMD ["catalina.sh", "run"]
