@@ -1,41 +1,34 @@
 package coursemnt;
 
-
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.SQLException;
 
 public class DBConnection {
-
-    private static final String URL =
-            "jdbc:mysql://localhost:3306/code_conquer?useSSL=false&serverTimezone=UTC";
-
-    private static final String USER = "root";
-
-    private static final String PASSWORD = "#Ghayathri27";
-
-    public static Connection getConnection() throws SQLException {
-
+    public static Connection getConnection() {
+        Connection con = null;
         try {
-            // Load MySQL JDBC Driver
             Class.forName("com.mysql.cj.jdbc.Driver");
+            
+            // System Environment Variables (Railway-la auto-fetch aagum)
+            String host = System.getenv("MYSQLHOST");
+            String port = System.getenv("MYSQLPORT");
+            String dbName = System.getenv("MYSQLDATABASE");
+            String user = System.getenv("MYSQLUSER");
+            String password = System.getenv("MYSQLPASSWORD");
 
-        } catch (ClassNotFoundException e) {
-
-            throw new SQLException(
-                    "MySQL JDBC Driver not found. Add mysql-connector-j.jar to WEB-INF/lib.",
-                    e
-            );
+            // Railway-la env variable illana default hardcoded values use pannum
+            if (host == null) {
+                // Testing locally or direct Railway Public Domain
+                String url = "jdbc:mysql://YOUR_RAILWAY_MYSQL_PUBLIC_HOST:PORT/YOUR_DB_NAME?useSSL=false&allowPublicKeyRetrieval=true";
+                con = DriverManager.getConnection(url, "root", "YOUR_PASSWORD");
+            } else {
+                // Inside Railway Network
+                String url = "jdbc:mysql://" + host + ":" + port + "/" + dbName + "?useSSL=false&allowPublicKeyRetrieval=true";
+                con = DriverManager.getConnection(url, user, password);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-
-        Connection con = DriverManager.getConnection(
-                URL,
-                USER,
-                PASSWORD
-        );
-
-        System.out.println("MySQL connection successful!");
-
         return con;
     }
 }
